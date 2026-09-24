@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Exit Countdown">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Exit Countdown</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--text:#1c1c1e;--muted:#8e8e93;--border:#ededed;--orange:#ff8a00;--pink:#9b4dca;--teal:#008b8b}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.app{max-width:900px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom))}
+.soft{background:#fff;border:1px solid var(--border);border-radius:22px}.hero{padding:24px}.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.hero-title{margin-top:10px;font-size:28px;font-weight:650}.hero-sub{margin-top:6px;color:var(--muted);font-size:15px;line-height:1.5}.big-row{margin-top:28px;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
+.big{font-size:78px;line-height:.95;font-weight:700;letter-spacing:-.055em;color:var(--orange)}.big-label{padding-bottom:6px;color:var(--muted);font-size:18px}.realtime{margin-top:18px;font-size:14px;color:var(--muted)}
+.pills{margin-top:18px;display:grid;gap:10px}.pill{border-radius:16px;padding:12px 14px;font-size:13px;font-weight:650}.pill-tender{background:linear-gradient(135deg,#f7efff,#fff0f7);border:1px solid #ead8ff;color:var(--pink)}
+.pill-last{background:linear-gradient(135deg,#ecfbff,#effff7);border:1px solid #cceff1;color:var(--teal)}.section{margin-top:16px}.card{padding:18px}.section-title{font-size:14px;font-weight:700}
+.milestone{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid #efefef}.milestone:last-child{border-bottom:none}.m-title{font-size:14px;font-weight:650}.m-sub{margin-top:4px;font-size:12px;color:var(--muted)}
+.status{font-size:11px;font-weight:700;padding:6px 9px;border-radius:999px;background:#f4f4f5;color:#666;white-space:nowrap}.status.today{background:var(--orange);color:#fff}.status.done{background:#f1f1f1;color:#aaa}.status.upcoming{background:#f3f0ff;color:#7256c7}
+.months{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.month{background:#fff;border:1px solid var(--border);border-radius:20px;padding:14px}.month-title{font-size:14px;font-weight:700;margin-bottom:10px}
+.weekgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.weekday{font-size:10px;text-align:center;color:var(--muted);margin-bottom:4px}.day{min-height:50px;border:1px solid #efefef;border-radius:11px;padding:5px;background:#fff;display:flex;flex-direction:column;gap:3px;min-width:0}
+.day.empty{border:none;background:transparent}.day.past{opacity:.3;background:#fafafa}.day.outscope{opacity:.22;background:#fff;border-color:#f4f4f4}.day.today{outline:2px solid #1c1c1e;outline-offset:1px}.day.rest{background:#f7f7f8}.day.leave{background:#f8f2ff}.day.comp{background:#fff7e8}.day.tender{background:#fff3e8;border-color:#ffd6ad}.day.last{background:#eefdf8;border-color:#c9f2e4}
+.day-num{font-size:12px;font-weight:600}.tag{font-size:9px;color:#6b6b70;border-radius:999px;background:#f1f1f2;padding:3px 5px;width:fit-content;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tag-tender{background:#ffe2c2;color:#b85c00}.tag-last{background:#d7f7ec;color:#06745f}
+.last10{margin-top:16px;display:none}.last10.show{display:block}.last10-list{margin-top:10px;display:grid;gap:7px}.last10-item{display:flex;justify-content:space-between;gap:10px;border:1px solid #eee;border-radius:12px;padding:11px 12px;font-size:13px}
+.last10-item:nth-child(1){background:#fff2e8}.last10-item:nth-child(2){background:#fff7df}.last10-item:nth-child(3){background:#eefbf2}.last10-item:nth-child(4){background:#eaf8ff}.last10-item:nth-child(5){background:#f2efff}
+.last10-item:nth-child(6){background:#fff0f6}.last10-item:nth-child(7){background:#fff2e8}.last10-item:nth-child(8){background:#eefbf2}.last10-item:nth-child(9){background:#eaf8ff}.last10-item:nth-child(10){background:#f2efff}
+.footer{margin-top:18px;text-align:center;color:var(--muted);font-size:11px;line-height:1.5}@media(max-width:720px){.months{grid-template-columns:1fr}.big{font-size:72px}.hero-title{font-size:26px}}
+</style>
+</head>
+<body>
+<main class="app">
+<section class="soft hero">
+<div class="eyebrow">Exit Countdown</div>
+<div id="hero-title" class="hero-title">Loading…</div>
+<div id="hero-sub" class="hero-sub"></div>
+<div class="big-row"><div id="hero-big" class="big">--</div><div id="hero-label" class="big-label">--</div></div>
+<div id="hero-realtime" class="realtime">--</div>
+<div class="pills"><div id="pill-tender" class="pill pill-tender">--</div><div id="pill-last" class="pill pill-last">--</div></div>
+</section>
+<section class="soft card section">
+<div class="section-title">Milestones</div><div id="milestones"></div>
+<div id="last10-wrap" class="last10"><div class="section-title">最后 10 个工作日</div><div id="last10-list" class="last10-list"></div></div>
+</section>
+<section class="section"><div class="section-title" style="margin-bottom:10px">Sep — Dec 2026</div><div id="calendar" class="months"></div></section>
+<div class="footer">每周一休息 · 9/30、10/1、10/2 请假 · 11/10 补休<br>Last Day · 6 Dec 2026 · 7:30 PM</div>
+</main>
+<script>
+(()=>{const tender=new Date('2026-10-07T00:00:00+08:00'),lastDT=new Date('2026-12-06T19:30:00+08:00'),lastDay=new Date('2026-12-06T00:00:00+08:00');
+const leaves=new Set(['2026-09-30','2026-10-01','2026-10-02']),comp=new Set(['2026-11-10']);
+const pad=n=>String(n).padStart(2,'0'),ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`,sod=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate()),add=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x},same=(a,b)=>ymd(a)===ymd(b),isMon=d=>d.getDay()===1;
+const fmt=d=>d.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'}),fmtShort=d=>d.toLocaleDateString('en-SG',{day:'numeric',month:'short'}),wd=d=>d.toLocaleDateString('en-SG',{weekday:'short'});
+const workTender=d=>!isMon(d)&&!leaves.has(ymd(d)),workLast=d=>!isMon(d)&&!comp.has(ymd(d));
+function countWork(from,to,mode){let count=0,c=sod(from),end=sod(to);while(c<=end){if((mode==='tender'?workTender(c):workLast(c)))count++;c=add(c,1)}return count}
+function listWork(from,to,mode){const out=[];let c=sod(from),end=sod(to);while(c<=end){if((mode==='tender'?workTender(c):workLast(c)))out.push(new Date(c));c=add(c,1)}return out}
+function countdown(target,now){const t=Math.floor(Math.max(0,target-now)/1000);return{days:Math.floor(t/86400),hours:Math.floor((t%86400)/3600),minutes:Math.floor((t%3600)/60),seconds:t%60}}
+function stage(now){if(now<tender)return'pre';if(ymd(now)==='2026-12-06'&&now<lastDT)return'last';if(now<lastDT)return'notice';return'done'}
+function milestoneDate(targetCount){let d=new Date('2026-10-08T00:00:00+08:00');while(d<=lastDay){if(workLast(d)&&countWork(d,lastDay,'last')===targetCount)return new Date(d);d=add(d,1)}return null}
+function lastWeekend(){let d=sod(lastDay);while(d>=new Date('2026-10-08T00:00:00+08:00')){if(d.getDay()===6)return new Date(d);d=add(d,-1)}return null}
+function renderHero(now){const s=stage(now),today=sod(now),nT=countdown(tender,now),nL=countdown(lastDT,now),wT=today<=tender?countWork(today,tender,'tender'):0,wL=today<=lastDay?countWork(today,lastDay,'last'):0;
+document.getElementById('pill-tender').textContent=`丢信自然日 ${nT.days}天（${wT}个工作日） · ${pad(nT.hours)}:${pad(nT.minutes)}:${pad(nT.seconds)}`;
+document.getElementById('pill-last').textContent=`Last Day 自然日 ${nL.days}天（${wL}个工作日） · ${pad(nL.hours)}:${pad(nL.minutes)}:${pad(nL.seconds)}`;
+if(s==='pre'){document.getElementById('hero-title').textContent='距离丢信还有';document.getElementById('hero-sub').textContent='先到 10月7日。Q3 Bonus到账，然后丢信。';document.getElementById('hero-big').textContent=wT;document.getElementById('hero-label').textContent='个工作日';document.getElementById('hero-realtime').textContent=`自然时间还剩 ${nT.days}天 ${nT.hours}小时 ${nT.minutes}分 ${nT.seconds}秒`}
+else if(s==='notice'){document.getElementById('hero-title').textContent='Notice Period';document.getElementById('hero-sub').textContent='辞职已经提交。现在只是在完成最后一段倒数。';document.getElementById('hero-big').textContent=wL;document.getElementById('hero-label').textContent='个工作日';document.getElementById('hero-realtime').textContent=`距离 Last Day 还剩 ${nL.days}天 ${nL.hours}小时 ${nL.minutes}分 ${nL.seconds}秒`}
+else if(s==='last'){const x=countdown(lastDT,now);document.getElementById('hero-title').textContent='LAST DAY';document.getElementById('hero-sub').textContent='今天 7:30 PM，正式结束。';document.getElementById('hero-big').textContent=`${pad(x.hours)}:${pad(x.minutes)}:${pad(x.seconds)}`;document.getElementById('hero-label').textContent='到下班';document.getElementById('hero-realtime').textContent='最后一天。'}
+else{document.getElementById('hero-title').textContent='Completed';document.getElementById('hero-sub').textContent='Tree Art 这一段正式结束。';document.getElementById('hero-big').textContent='✓';document.getElementById('hero-label').textContent='Done';document.getElementById('hero-realtime').textContent=''}}
+function renderMilestones(now){const items=[{title:'Q3 Bonus💰 + 丢信！！',date:tender,sub:'奖金到账 · 提交辞职信'},{title:'剩30个工作日',date:milestoneDate(30),sub:'进入30个工作日倒数'},{title:'剩10个工作日',date:milestoneDate(10),sub:'开始一天一天数'},{title:'最后一个周末班',date:lastWeekend(),sub:'最后一个周末工作段'},{title:'Last Day',date:lastDay,sub:'6 Dec · 7:30 PM'}].filter(x=>x.date);
+const box=document.getElementById('milestones');box.innerHTML='';items.forEach(item=>{const row=document.createElement('div');row.className='milestone';const left=document.createElement('div');left.innerHTML=`<div class="m-title">${item.title}</div><div class="m-sub">${fmt(item.date)} · ${item.sub}</div>`;const st=document.createElement('div');st.className='status';const d=sod(item.date),n=sod(now);if(d<n){st.classList.add('done');st.textContent='DONE'}else if(d.getTime()===n.getTime()){st.classList.add('today');st.textContent='TODAY'}else{st.classList.add('upcoming');st.textContent='UPCOMING'}row.append(left,st);box.appendChild(row)});
+const rem=sod(now)<=lastDay?countWork(sod(now),lastDay,'last'):0,wrap=document.getElementById('last10-wrap'),list=document.getElementById('last10-list');if((stage(now)==='notice'||stage(now)==='last')&&rem>0&&rem<=10){wrap.classList.add('show');list.innerHTML='';listWork(sod(now),lastDay,'last').slice(0,10).forEach((d,idx)=>{const row=document.createElement('div');row.className='last10-item';row.innerHTML=`<span>${fmtShort(d)} · ${wd(d)}</span><span style="color:#8e8e93">剩 ${rem-idx} 天</span>`;list.appendChild(row)})}else wrap.classList.remove('show')}
+function dayMeta(d,now){const id=ymd(d),cls=['day'],tags=[];if(sod(d)<sod(now))cls.push('past');if(same(d,now))cls.push('today');if(id>'2026-12-06'){cls.push('outscope');return{cls,tags}}if(id==='2026-10-07'){cls.push('tender');tags.push(['Bonus + Tender','tag-tender']);return{cls,tags}}if(id==='2026-12-06'){cls.push('last');tags.push(['Last Day','tag-last']);return{cls,tags}}if(leaves.has(id)){cls.push('leave');tags.push(['Leave','']);return{cls,tags}}if(comp.has(id)){cls.push('comp');tags.push(['Off in Lieu','']);return{cls,tags}}if(isMon(d)){cls.push('rest');tags.push(['Rest','']);return{cls,tags}}tags.push(['Work','']);return{cls,tags}}
+function renderCalendar(now){const wrap=document.getElementById('calendar');wrap.innerHTML='';for(let month=8;month<=11;month++){const first=new Date(2026,month,1),last=new Date(2026,month+1,0),card=document.createElement('section');card.className='month';const title=document.createElement('div');title.className='month-title';title.textContent=first.toLocaleDateString('en-SG',{month:'long',year:'numeric'});card.appendChild(title);const weekdays=document.createElement('div');weekdays.className='weekgrid';['S','M','T','W','T','F','S'].forEach(x=>{const el=document.createElement('div');el.className='weekday';el.textContent=x;weekdays.appendChild(el)});card.appendChild(weekdays);const grid=document.createElement('div');grid.className='weekgrid';for(let i=0;i<first.getDay();i++){const empty=document.createElement('div');empty.className='day empty';grid.appendChild(empty)}for(let n=1;n<=last.getDate();n++){const d=new Date(2026,month,n),meta=dayMeta(d,now),cell=document.createElement('div');cell.className=meta.cls.join(' ');const num=document.createElement('div');num.className='day-num';num.textContent=n;cell.appendChild(num);meta.tags.forEach(([text,extra])=>{const tag=document.createElement('div');tag.className=`tag ${extra}`;tag.textContent=text;cell.appendChild(tag)});grid.appendChild(cell)}card.appendChild(grid);wrap.appendChild(card)}}
+function tick(){const now=new Date();renderHero(now);renderMilestones(now);renderCalendar(now)}tick();setInterval(tick,1000)})();
+</script>
+</body></html>
