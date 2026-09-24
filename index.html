@@ -78,9 +78,53 @@ button,input{font:inherit}
 .last10-item:nth-child(6){background:#fff0f6}.last10-item:nth-child(7){background:#fff2e8}.last10-item:nth-child(8){background:#eefbf2}.last10-item:nth-child(9){background:#eaf8ff}.last10-item:nth-child(10){background:#f2efff}
 .page-title{font-size:28px;font-weight:700;margin:4px 0 14px}
 .settings-grid{display:grid;gap:14px}
-.setting{background:#fff;border:1px solid var(--border);border-radius:18px;padding:16px}
-.setting label{display:block;font-size:13px;font-weight:650;margin-bottom:8px}
-.setting input{width:100%;border:1px solid #ddd;border-radius:12px;padding:12px 13px;background:#fafafa;color:var(--text);font-size:16px}
+.setting{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:14px 16px;
+}
+.setting label{
+  display:block;
+  font-size:13px;
+  font-weight:650;
+  margin-bottom:8px;
+}
+.setting input{
+  display:block;
+  width:100%;
+  max-width:100%;
+  height:52px;
+  margin:0;
+  padding:0 14px;
+
+  border:1px solid #e5e5e7;
+  border-radius:14px;
+  background:#f7f7f8;
+  color:var(--text);
+
+  font-size:16px;
+  line-height:52px;
+
+  box-shadow:none;
+  outline:none;
+
+  -webkit-appearance:none;
+  appearance:none;
+}
+.setting input[type="date"],
+.setting input[type="time"]{
+  min-height:52px;
+  height:52px;
+  padding:0 14px;
+  text-align:left;
+  background:#f7f7f8;
+}
+
+.setting input::-webkit-date-and-time-value{
+  text-align:left;
+  margin:0;
+}
 .helper{font-size:12px;color:var(--muted);line-height:1.5;margin-top:7px}
 .btn{border:none;border-radius:14px;padding:12px 15px;font-weight:700;cursor:pointer}
 .btn-primary{background:#111;color:white}
