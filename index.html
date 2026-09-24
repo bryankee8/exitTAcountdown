@@ -131,6 +131,7 @@ button,input{font:inherit}
 .btn-secondary{background:#efeff1;color:#222}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
 .nav{
+  touch-action:pan-y;
   position:fixed;
   left:50%;
   bottom:calc(10px + env(safe-area-inset-bottom));
@@ -194,18 +195,75 @@ button,input{font:inherit}
 }
 .nav button.active{
   color:#111;
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.45));
-  border:1px solid rgba(255,255,255,.72);
-  box-shadow:
-    0 4px 12px rgba(0,0,0,.07),
-    inset 0 1px 0 rgba(255,255,255,.95),
-    inset 0 -1px 0 rgba(255,255,255,.34);
+  background:transparent;
+  border-color:transparent;
+  box-shadow:none;
 }
 .nav .icon{
   font-size:18px;
   line-height:1;
   text-shadow:0 1px 0 rgba(255,255,255,.7);
+}
+  .nav-slider{
+  position:absolute;
+  top:7px;
+  left:7px;
+
+  width:calc((100% - 14px) / 4);
+  height:calc(100% - 14px);
+
+  border-radius:17px;
+
+  /* Liquid glass */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.82),
+      rgba(255,255,255,.42)
+    );
+
+  border:1px solid rgba(255,255,255,.9);
+
+  -webkit-backdrop-filter:
+    blur(22px)
+    saturate(190%);
+
+  backdrop-filter:
+    blur(22px)
+    saturate(190%);
+
+  box-shadow:
+    0 5px 18px rgba(0,0,0,.10),
+    0 0 18px rgba(255,255,255,.65),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(255,255,255,.35);
+
+  transform:translateX(0);
+
+  transition:
+    transform .38s cubic-bezier(.22,1,.36,1),
+    width .22s ease,
+    box-shadow .22s ease;
+
+  pointer-events:none;
+
+  z-index:0;
+}
+
+.nav-slider.dragging{
+  transition:none;
+
+  box-shadow:
+    0 7px 22px rgba(0,0,0,.13),
+    0 0 25px rgba(255,255,255,.95),
+    inset 0 1px 0 rgba(255,255,255,1);
+
+  transform-origin:center;
+}
+
+.nav button{
+  position:relative;
+  z-index:2;
 }
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.28);display:none;align-items:flex-end;justify-content:center;z-index:30;padding:12px}
 .modal.show{display:flex}
@@ -296,10 +354,27 @@ button,input{font:inherit}
 </main>
 
 <nav class="nav" aria-label="Bottom navigation">
-  <button class="active" data-view="home" type="button"><span class="icon">⌂</span><span>Home</span></button>
-  <button data-view="milestones" type="button"><span class="icon">◎</span><span>Milestones</span></button>
-  <button data-view="calendar" type="button"><span class="icon">▦</span><span>Calendar</span></button>
-  <button data-view="settings" type="button"><span class="icon">⚙</span><span>Settings</span></button>
+  <div class="nav-slider" aria-hidden="true"></div>
+
+  <button class="active" data-view="home" type="button">
+    <span class="icon">⌂</span>
+    <span>Home</span>
+  </button>
+
+  <button data-view="milestones" type="button">
+    <span class="icon">◎</span>
+    <span>Milestones</span>
+  </button>
+
+  <button data-view="calendar" type="button">
+    <span class="icon">▦</span>
+    <span>Calendar</span>
+  </button>
+
+  <button data-view="settings" type="button">
+    <span class="icon">⚙</span>
+    <span>Settings</span>
+  </button>
 </nav>
 
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -491,44 +566,181 @@ function openModal(title,body){
 function closeModal(){document.getElementById('modal').classList.remove('show')}
 
 function bindNav(){
-  document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click',()=>{
-    const target=btn.dataset.view;
-    document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b===btn));
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    document.getElementById(`view-${target}`).classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
-  }));
-}
-function fillSettings(){
-  document.getElementById('tenderDateInput').value=config.tenderDate;
-  document.getElementById('lastDateInput').value=config.lastDate;
-  document.getElementById('lastTimeInput').value=config.lastTime;
-  document.getElementById('leaveInput').value=config.leaves.join(', ');
-  document.getElementById('compInput').value=config.comp.join(', ');
-}
-function parseDates(text){
-  return text.split(',').map(x=>x.trim()).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x));
-}
-document.getElementById('saveSettings').addEventListener('click',()=>{
-  config={
-    tenderDate:document.getElementById('tenderDateInput').value||DEFAULTS.tenderDate,
-    lastDate:document.getElementById('lastDateInput').value||DEFAULTS.lastDate,
-    lastTime:document.getElementById('lastTimeInput').value||DEFAULTS.lastTime,
-    leaves:parseDates(document.getElementById('leaveInput').value),
-    comp:parseDates(document.getElementById('compInput').value)
-  };
-  saveConfig();document.getElementById('settingsMsg').textContent='已保存。页面倒数已更新。';tick();
-});
-document.getElementById('resetSettings').addEventListener('click',()=>{
-  config=structuredClone(DEFAULTS);saveConfig();fillSettings();document.getElementById('settingsMsg').textContent='已恢复默认设置。';tick();
-});
-document.getElementById('modal-close').addEventListener('click',closeModal);
-document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+  function bindNav(){
 
-bindNav();fillSettings();
-function tick(){const now=new Date();renderHero(now);renderMilestones(now);renderCalendar(now)}
-tick();setInterval(tick,1000);
-})();
+  const nav = document.querySelector('.nav');
+  const slider = document.querySelector('.nav-slider');
+  const buttons = [...document.querySelectorAll('.nav button')];
+
+  let activeIndex = 0;
+  let dragging = false;
+  let dragX = 0;
+
+  function sliderWidth(){
+    return (nav.clientWidth - 14) / buttons.length;
+  }
+
+  function moveSlider(index, animate = true){
+
+    const width = sliderWidth();
+
+    if(animate){
+      slider.classList.remove('dragging');
+    }else{
+      slider.classList.add('dragging');
+    }
+
+    slider.style.transform =
+      `translateX(${index * width}px)`;
+  }
+
+  function switchView(index){
+
+    index = Math.max(
+      0,
+      Math.min(buttons.length - 1, index)
+    );
+
+    activeIndex = index;
+
+    const btn = buttons[index];
+    const target = btn.dataset.view;
+
+    buttons.forEach((b,i)=>{
+      b.classList.toggle(
+        'active',
+        i === index
+      );
+    });
+
+    document
+      .querySelectorAll('.view')
+      .forEach(v=>{
+        v.classList.remove('active');
+      });
+
+    document
+      .getElementById(`view-${target}`)
+      .classList.add('active');
+
+    moveSlider(index,true);
+
+    window.scrollTo({
+      top:0,
+      behavior:'smooth'
+    });
+  }
+
+
+  /* 正常点击 */
+
+  buttons.forEach((btn,index)=>{
+
+    btn.addEventListener('click',()=>{
+
+      if(dragging) return;
+
+      switchView(index);
+
+    });
+
+  });
+
+
+  /* 手指按下 */
+
+  nav.addEventListener('pointerdown',(e)=>{
+
+    dragging = true;
+
+    slider.classList.add('dragging');
+
+    nav.setPointerCapture(e.pointerId);
+
+  });
+
+
+  /* 手指移动 */
+
+  nav.addEventListener('pointermove',(e)=>{
+
+    if(!dragging) return;
+
+    const rect = nav.getBoundingClientRect();
+
+    const width = sliderWidth();
+
+    let x =
+      e.clientX
+      - rect.left
+      - width / 2;
+
+    const min = 0;
+
+    const max =
+      nav.clientWidth
+      - 14
+      - width;
+
+    x = Math.max(
+      min,
+      Math.min(max,x)
+    );
+
+    dragX = x;
+
+    slider.style.transform =
+      `translateX(${x}px)`;
+
+  });
+
+
+  /* 手指松开 */
+
+  function endDrag(){
+
+    if(!dragging) return;
+
+    dragging = false;
+
+    slider.classList.remove('dragging');
+
+    const width = sliderWidth();
+
+    const nearestIndex =
+      Math.round(dragX / width);
+
+    switchView(nearestIndex);
+
+  }
+
+
+  nav.addEventListener(
+    'pointerup',
+    endDrag
+  );
+
+  nav.addEventListener(
+    'pointercancel',
+    endDrag
+  );
+
+
+  /* 屏幕旋转 / 宽度变化 */
+
+  window.addEventListener(
+    'resize',
+    ()=>{
+      moveSlider(activeIndex,false);
+    }
+  );
+
+
+  /* 初始化 */
+
+  moveSlider(0,false);
+
+}
 </script>
 </body>
 </html>
