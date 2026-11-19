@@ -47,11 +47,12 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 @media(prefers-reduced-transparency:reduce){.soft,.month,.setting,.nav,.sheet,.pill{background:#f7faf5;-webkit-backdrop-filter:none;backdrop-filter:none}.modal{-webkit-backdrop-filter:none;backdrop-filter:none}}
 
 </style>
+<link rel="stylesheet" href="./navigation.css?v=20261119">
 </head>
 <body>
 <main class="app">
 <header class="masthead"><div class="brand"><i></i>THE NEXT CHAPTER</div><div class="edition">BRYAN · EXIT COUNTDOWN / 2026</div></header>
-  <section id="view-home" class="view active">
+  <section id="view-home" role="tabpanel" aria-labelledby="tab-home" tabindex="0" class="view active">
     <section class="soft hero">
       <div class="eyebrow">Exit Countdown</div>
       <div id="hero-title" class="hero-title">Loading…</div>
@@ -69,7 +70,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
     </section>
   </section>
 
-  <section id="view-milestones" class="view">
+  <section id="view-milestones" role="tabpanel" aria-labelledby="tab-milestones" tabindex="0" class="view">
     <div class="page-title">Milestones</div>
     <section class="soft card">
       <div id="milestones"></div>
@@ -80,12 +81,12 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
     </section>
   </section>
 
-  <section id="view-calendar" class="view">
+  <section id="view-calendar" role="tabpanel" aria-labelledby="tab-calendar" tabindex="0" class="view">
     <div class="page-title">Calendar</div>
     <div id="calendar" class="months"></div>
   </section>
 
-  <section id="view-settings" class="view">
+  <section id="view-settings" role="tabpanel" aria-labelledby="tab-settings" tabindex="0" class="view">
     <div class="page-title">Settings</div>
     <div class="settings-grid">
       <div class="setting">
@@ -125,29 +126,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
   <div class="footer">ONE DAY CLOSER TO A NEW BEGINNING</div>
 </main>
 
-<nav class="nav" aria-label="Bottom navigation">
-  <div class="nav-slider" aria-hidden="true"></div>
-
-  <button class="active" data-view="home" type="button">
-    <span class="icon">⌂</span>
-    <span>Home</span>
-  </button>
-
-  <button data-view="milestones" type="button">
-    <span class="icon">◎</span>
-    <span>Milestones</span>
-  </button>
-
-  <button data-view="calendar" type="button">
-    <span class="icon">▦</span>
-    <span>Calendar</span>
-  </button>
-
-  <button data-view="settings" type="button">
-    <span class="icon">⚙</span>
-    <span>Settings</span>
-  </button>
-</nav>
+<nav class="nav" role="tablist" aria-label="主导航"><div class="nav-slider" aria-hidden="true"></div><button id="tab-home" role="tab" aria-controls="view-home" aria-selected="true" tabindex="0" data-view="home" type="button" class="active"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-8h6v8"/></svg></span><span>总览</span></button><button id="tab-milestones" role="tab" aria-controls="view-milestones" aria-selected="false" tabindex="-1" data-view="milestones" type="button"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V2m0 1c6-4 10 4 16 0v12c-6 4-10-4-16 0"/></svg></span><span>里程碑</span></button><button id="tab-calendar" role="tab" aria-controls="view-calendar" aria-selected="false" tabindex="-1" data-view="calendar" type="button"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4m8-4v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg></span><span>日历</span></button><button id="tab-settings" role="tab" aria-controls="view-settings" aria-selected="false" tabindex="-1" data-view="settings" type="button"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 1.72l-.12.87a2 2 0 0 1-1.18 1.52l-.2.09a2 2 0 0 1-1.9-.18l-.7-.54a2 2 0 0 0-2.6.66l-.22.38a2 2 0 0 0 .46 2.58l.7.54a2 2 0 0 1 .72 1.73v.22a2 2 0 0 1-.72 1.73l-.7.54a2 2 0 0 0-.46 2.58l.22.38a2 2 0 0 0 2.6.66l.7-.54a2 2 0 0 1 1.9-.18l.2.09a2 2 0 0 1 1.18 1.52l.12.87a2 2 0 0 0 2 1.72h.44a2 2 0 0 0 2-1.72l.12-.87a2 2 0 0 1 1.18-1.52l.2-.09a2 2 0 0 1 1.9.18l.7.54a2 2 0 0 0 2.6-.66l.22-.39a2 2 0 0 0-.46-2.57l-.7-.54a2 2 0 0 1-.72-1.73v-.22a2 2 0 0 1 .72-1.73l.7-.54a2 2 0 0 0 .46-2.58l-.22-.38a2 2 0 0 0-2.6-.66l-.7.54a2 2 0 0 1-1.9.18l-.2-.09a2 2 0 0 1-1.18-1.52l-.12-.87a2 2 0 0 0-2-1.72Z"/><circle cx="12" cy="11.5" r="3"/></svg></span><span>设置</span></button></nav>
 
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="sheet">
@@ -342,89 +321,6 @@ function openModal(title,body){
 }
 function closeModal(){document.getElementById('modal').classList.remove('show')}
 
-function bindNav(){
-  const nav = document.querySelector('.nav');
-  const slider = document.querySelector('.nav-slider');
-  const buttons = [...document.querySelectorAll('.nav button')];
-
-  let activeIndex = Math.max(0, buttons.findIndex(b => b.classList.contains('active')));
-  let dragging = false;
-  let dragX = 0;
-
-  function sliderWidth(){
-    return (nav.clientWidth - 14) / buttons.length;
-  }
-
-  function clampX(x){
-    const width = sliderWidth();
-    const min = 0;
-    const max = nav.clientWidth - 14 - width;
-    return Math.max(min, Math.min(max, x));
-  }
-
-  function moveSliderToIndex(index, animate = true){
-    const width = sliderWidth();
-    slider.classList.toggle('dragging', !animate);
-    dragX = index * width;
-    slider.style.transform = `translateX(${dragX}px)`;
-  }
-
-  function switchView(index){
-    index = Math.max(0, Math.min(buttons.length - 1, index));
-    activeIndex = index;
-
-    const btn = buttons[index];
-    const target = btn.dataset.view;
-
-    buttons.forEach((b,i)=>b.classList.toggle('active', i === index));
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    document.getElementById(`view-${target}`).classList.add('active');
-
-    moveSliderToIndex(index, true);
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-
-  buttons.forEach((btn,index)=>{
-    btn.addEventListener('click',()=>switchView(index));
-  });
-
-  nav.addEventListener('pointerdown',(e)=>{
-    dragging = true;
-    slider.classList.add('dragging');
-    nav.setPointerCapture(e.pointerId);
-
-    const rect = nav.getBoundingClientRect();
-    const width = sliderWidth();
-    dragX = clampX(e.clientX - rect.left - 7 - width / 2);
-    slider.style.transform = `translateX(${dragX}px)`;
-  });
-
-  nav.addEventListener('pointermove',(e)=>{
-    if(!dragging) return;
-
-    const rect = nav.getBoundingClientRect();
-    const width = sliderWidth();
-    dragX = clampX(e.clientX - rect.left - 7 - width / 2);
-    slider.style.transform = `translateX(${dragX}px)`;
-  });
-
-  function endDrag(){
-    if(!dragging) return;
-    dragging = false;
-    slider.classList.remove('dragging');
-
-    const width = sliderWidth();
-    const nearestIndex = Math.round(dragX / width);
-    switchView(nearestIndex);
-  }
-
-  nav.addEventListener('pointerup', endDrag);
-  nav.addEventListener('pointercancel', endDrag);
-
-  window.addEventListener('resize',()=>moveSliderToIndex(activeIndex,false));
-  moveSliderToIndex(activeIndex,false);
-}
-
 function fillSettings(){
   document.getElementById('tenderDateInput').value=config.tenderDate;
   document.getElementById('lastDateInput').value=config.lastDate;
@@ -469,7 +365,6 @@ document.getElementById('modal').addEventListener('click',e=>{
   if(e.target.id==='modal') closeModal();
 });
 
-bindNav();
 fillSettings();
 
 function tick(){
@@ -483,6 +378,7 @@ tick();
 setInterval(tick,1000);
 })();
 </script>
+<script src="./navigation.js?v=20261119"></script>
 </body>
 </html>
 
